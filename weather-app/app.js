@@ -1,34 +1,23 @@
 const geocode = require('./utils/geocode');
+const forecast = require('./utils/forecast');
 
-// const weatherUrl = urlDefinations.weatherUrl;
+const address = process.argv[2];
 
-// request({ url: weatherUrl, json: true }, (error, response) => {
-//   if (error) {
-//     console.log('Unable to connect to weather service!');
-//   } else if (response.body.error) {
-//     console.log('Unable to find location!');
-//   } else {
-//     console.log(
-//       `${response.body.daily.data[0].summary} It is currently ${response.body.currently.temperature} degrees out. There is a ${response.body.currently.precipProbability}% change of rain`
-//     );
-//   }
-// });
+if (!address) {
+  console.log('Please provide an address');
+} else {
+  geocode(address, (error, data) => {
+    if (error) {
+      return console.log(error);
+    }
 
-// const mapUrl = urlDefinations.mapUrl;
+    forecast(data.latitude, data.longitude, (error, forecastData) => {
+      if (error) {
+        return console.log(error);
+      }
 
-// request({ url: mapUrl, json: true }, (error, response) => {
-//   if (error) {
-//     console.log('Unable to connect to location services!');
-//   } else if (response.body.features.length === 0) {
-//     console.log('Unable to find location. Try another search.');
-//   } else {
-//     const latitude = response.body.features[0].center[0];
-//     const longitude = response.body.features[0].center[1];
-//     console.log(latitude, longitude);
-//   }
-// });
-
-geocode('Boston', (error, data) => {
-  console.log('Error', error);
-  console.log('Data', data);
-});
+      console.log(data.location);
+      console.log(forecastData);
+    });
+  });
+}
